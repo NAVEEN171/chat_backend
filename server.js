@@ -10,9 +10,17 @@ const bodyParser=require("body-parser");
 
 
 
-app.use(cors());
+app.use(cors(
+  {
+    origin:"https://chat-app-sand-delta.vercel.app",
+    methods:["GET","POST"],
+    credentials:true
+  }
+));
 app.use(bodyParser.json())
-app.use("/uploads/images",express.static(path.join("uploads","images")))
+app.use("/uploads/images",express.static(path.join("uploads","images")));
+
+
 app.use((req, res, next) => {
   
   res.header('Access-Control-Allow-Origin', '*');
@@ -20,6 +28,10 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
   next();
 });
+
+app.get("/",(req,res)=>{
+  res.json("deployed succesfully")
+})
 app.use("/",userroutes);
 app.use("/messages",messageroutes)
 let serv;
