@@ -39,7 +39,7 @@ mongoose.connect(process.env.MongoDBURI
     console.log("connected")
     const io = require("socket.io")(serv, {
       cors: {
-        origin: "http://localhost:3000",
+        origin: "*",
         // credentials: true,
       },
     });
