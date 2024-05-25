@@ -13,7 +13,7 @@ require("dotenv").config()
 
 app.use(cors(
   {
-    origin:["https://chat-backend-six-neon.vercel.app"],
+    origin:["https://chat-backend-six-neon.vercel.app","http://localhost:3000"],
     methods:["GET","POST","PUT","DELETE"],
     credentials:true,
   }
