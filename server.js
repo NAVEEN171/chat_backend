@@ -39,9 +39,11 @@ mongoose.connect(process.env.MongoDBURI
     console.log("connected")
     const io = require("socket.io")(serv, {
       cors: {
-        origin: "https://chat-app-blush-rho.vercel.app/",
-        // credentials: true,
-      },
+        origin: "https://chat-app-blush-rho.vercel.app",
+        methods: ["GET", "POST"],
+        allowedHeaders: ["my-custom-header"],
+        credentials: true
+      }
     });
     
     io.on("connection", (socket) => {
