@@ -2,12 +2,15 @@ const express=require("express");
 const cors=require("cors");
 const path=require("path");
 const mongoose=require("mongoose");
+const http=require("http")
 const userroutes=require("./controllers/usercontrollers");
 const messageroutes=require("./controllers/messagecontrollers")
 const app=express();
 const bodyParser=require("body-parser");
 require("dotenv").config();
 const { Server } = require("socket.io");
+const server = http.createServer(app);
+
 
  // Import socket.io module
 
@@ -34,7 +37,7 @@ app.use("/messages",messageroutes)
 let serv;
 let roomid;
 let useridentity;
-serv = app.listen(5000);
+serv = server.listen(5000);
 
 mongoose.connect(process.env.MongoDBURI
     ).then(()=>{
@@ -42,7 +45,8 @@ mongoose.connect(process.env.MongoDBURI
     const io = require("socket.io")(serv, {
       pingTimeout:60000,
       cors: {
-        origin: "https://chat-app-blush-rho.vercel.app",
+    // origin: "https://chat-app-blush-rho.vercel.app",
+      origin:["http://localhost:3000","https://chat-app-blush-rho.vercel.app"]
         
       }
     });
