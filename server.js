@@ -43,11 +43,14 @@ mongoose.connect(process.env.MongoDBURI
     ).then(()=>{
     console.log("connected")
     const io = require("socket.io")(serv, {
+      wssEngine:['ws','wss'],
+      transports:["websocket","polling"],
       pingTimeout:60000,
       cors: {
     // origin: "https://chat-app-blush-rho.vercel.app",
-      origin:["http://localhost:3000","https://chat-app-blush-rho.vercel.app"]
-        
+      origin:["http://localhost:3000","https://chat-app-blush-rho.vercel.app"],
+      methods: ['GET', 'POST'],
+      allowedHeaders: ['Content-Type'],
       }
     });
     
