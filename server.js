@@ -39,7 +39,10 @@ let roomid;
 let useridentity;
 serv = server.listen(5000);
 
-mongoose.connect(process.env.MongoDBURI
+mongoose.connect(process.env.MongoDBURI,{ useNewUrlParser: true,
+  useUnifiedTopology: true,
+  w: 'majority'
+}
     ).then(()=>{
     console.log("connected")
     const io = require("socket.io")(serv, {
