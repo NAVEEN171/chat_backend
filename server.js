@@ -48,7 +48,7 @@ mongoose.connect(process.env.MongoDBURI
       pingTimeout:60000,
       cors: {
     // origin: "https://chat-app-blush-rho.vercel.app",
-      origin:["http://localhost:3000","https://chat-app-blush-rho.vercel.app"],
+      origin:["http://localhost:3000","https://chat-app-blush-rho.vercel.app","https://chat-app-backend-4fhe.onrender.com"],
       methods: ['GET', 'POST'],
       allowedHeaders: ['Content-Type'],
       }
