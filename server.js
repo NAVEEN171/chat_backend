@@ -6,7 +6,9 @@ const userroutes=require("./controllers/usercontrollers");
 const messageroutes=require("./controllers/messagecontrollers")
 const app=express();
 const bodyParser=require("body-parser");
-require("dotenv").config()
+require("dotenv").config();
+const { Server } = require("socket.io");
+
  // Import socket.io module
 
 
@@ -37,7 +39,7 @@ serv = app.listen(5000);
 mongoose.connect(process.env.MongoDBURI
     ).then(()=>{
     console.log("connected")
-    const io = require("socket.io")(serv, {
+    const io =new Server(serv, {
       cors: {
         origin: "https://chat-app-blush-rho.vercel.app",
         methods: ["GET", "POST"],
