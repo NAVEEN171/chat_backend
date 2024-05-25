@@ -43,7 +43,9 @@ mongoose.connect(process.env.MongoDBURI
         methods: ["GET", "POST"],
         allowedHeaders: ["my-custom-header"],
         credentials: true
-      }
+      },
+      transports: ['websocket'] // Enable WebSocket transport explicitly
+
     });
     
     io.on("connection", (socket) => {
