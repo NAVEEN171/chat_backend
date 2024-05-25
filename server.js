@@ -12,6 +12,11 @@ require("dotenv").config()
 
 
 app.use(cors(
+  {
+    origin:["https://chat-backend-six-neon.vercel.app"],
+    methods:["GET","POST","PUT","DELETE"],
+    credentials:true,
+  }
   
 ));
 app.use(bodyParser.json())
