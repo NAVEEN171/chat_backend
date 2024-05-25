@@ -39,7 +39,7 @@ mongoose.connect(process.env.MongoDBURI
     console.log("connected")
     const io = require("socket.io")(serv, {
       cors: {
-        origin: "*",
+        origin: ["https://chat-backend-six-neon.vercel.app","http://localhost:3000"],
         // credentials: true,
       },
     });
