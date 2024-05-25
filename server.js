@@ -39,12 +39,11 @@ serv = app.listen(5000);
 mongoose.connect(process.env.MongoDBURI
     ).then(()=>{
     console.log("connected")
-    const io =new Server(serv, {
+    const io = require("socket.io")(serv, {
+      pingTimeout:60000,
       cors: {
         origin: "https://chat-app-blush-rho.vercel.app",
-        methods: ["GET", "POST"],
-        allowedHeaders: ["my-custom-header"],
-        credentials: true
+        
       }
     });
     
