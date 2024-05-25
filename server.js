@@ -6,6 +6,7 @@ const userroutes=require("./controllers/usercontrollers");
 const messageroutes=require("./controllers/messagecontrollers")
 const app=express();
 const bodyParser=require("body-parser");
+require("dotenv").config()
  // Import socket.io module
 
 
@@ -35,7 +36,7 @@ let roomid;
 let useridentity;
 serv = app.listen(5000);
 
-mongoose.connect("mongodb+srv://naveen:1234567890@cluster0.glaacbh.mongodb.net/?retryWrites=true&w=majority"
+mongoose.connect(process.env.MongoDBURI
     ).then(()=>{
     console.log("connected")
     const io = require("socket.io")(serv, {
