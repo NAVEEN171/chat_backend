@@ -37,53 +37,73 @@ serv = app.listen(5000);
 mongoose.connect(process.env.MongoDBURI
     ).then(()=>{
     console.log("connected")
-   
+    const io = require("socket.io")(serv, {
+      cors: {
+        origin: "https://chat-app-blush-rho.vercel.app",
+        methods: ["GET", "POST"],
+        allowedHeaders: ["my-custom-header"],
+        credentials: true
+      }
+    });
+    
+    io.on("connection", (socket) => {
+      let uidd;
+      console.log("Connected to socket.io");
+        socket.on("setup",(user)=>{
+          socket.join(user._id);
+          useridentity=user._id;
+          uidd=user._id;
+          console.log(`user connected ${user._id}`)
+          io.emit("connuser",user._id);
+        })
+        socket.on("join chat",(room)=>{
+          console.log(`room:${room}`)
+           socket.join(room);
+          
+           console.log(`joined room ${room}`)
+           if(room!==null){
+            roomid=room
+            socket.emit("joinedchat",room)
+           }
+          
+        })
+        socket.on("disconnect",()=>{
+          io.emit("disconn",uidd);
+        })
+        socket.on("new message",(data)=>{
+          console.log("data fecthed")
+           console.log(data.messages.length-1);  
+           console.log("last msg");
+           let lastelement=data.messages[data.messages.length-1]
+           console.log(lastelement)
+          
+          /* if(useridentity===lastelement.sender){
+               lastelement.send=true;
+           }
+           else{
+            lastelement.send=false;
+           }*/
+           console.log(data.users)
+           let messagee=lastelement.txt;
+           if(data.users.length<=1){
+              return;
+           }
+           data.users.forEach((user)=>{
+            console.log(user);
+            console.log("run");
+
+                  if(user===lastelement.sender) return;
+            socket.in(roomid).emit("message recieved",{lastelement,status:true});
+           })
+
+           console.log(data.messages.length-1)
+        })
+    })
+  
+  
   })
   .catch((err)=>{
     console.log("not ")
     console.log(err)
   })
-  const io = require("socket.io")(server, {
-    cors: {
-      origin: "https://chat-app-blush-rho.vercel.app",
-      methods: ["GET", "POST"],
-      allowedHeaders: ["my-custom-header"],
-      credentials: true
-    }
-  });
-  
-  io.on("connection", (socket) => {
-    let uidd;
-    console.log("Connected to socket.io");
-  
-    socket.on("setup", (user) => {
-      socket.join(user._id);
-      useridentity = user._id;
-      uidd = user._id;
-      console.log(`user connected ${user._id}`);
-      io.emit("connuser", user._id);
-    });
-  
-    socket.on("join chat", (room) => {
-      console.log(`room:${room}`);
-      socket.join(room);
-      console.log(`joined room ${room}`);
-      if (room !== null) {
-        roomid = room;
-        socket.emit("joinedchat", room);
-      }
-    });
-  
-    socket.on("disconnect", () => {
-      io.emit("disconn", uidd);
-    });
-  
-    socket.on("new message", (data) => {
-      console.log("new message received:", data);
-      let lastelement = data.messages[data.messages.length - 1];
-  
-      // Emit message to all users in the room except the sender
-      socket.to(roomid).emit("message received", { message: lastelement, status: true });
-    });
-  });
   const connection=mongoose.connection;
