@@ -163,6 +163,7 @@ router.post("/addmsg",async(req,res,next)=>{
            let fromjoinedroom=await users.findOne({_id:new ObjectId(from)});
            let sendmsg=true;
 
+
          const existchat= await msgs.findOne({name:msgdocumentname});
          const reversedexistchat=await msgs.findOne({name:reversedmsgdocumentname});
          if(tojoinedroom.currentroom===fromjoinedroom.currentroom && (tojoinedroom.currentroom!=="" && fromjoinedroom.currentroom!=="")){
@@ -219,7 +220,7 @@ router.post("/addmsg",async(req,res,next)=>{
                  )
               }
              
-              
+              console.log("abput to give response");
               res.json({ msg: "msg successfully uploaded", id: existchat ? msgdocumentname : reversedmsgdocumentname });
               
 
