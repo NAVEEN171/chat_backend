@@ -14,6 +14,42 @@ const db = connection.useDb("users");
 const users = db.collection("user");
 
 
+
+router.post("/changeroom/:id",async(req,res,next)=>{
+    let room=req.params.id;
+    const {user}=req.body;
+
+    
+    try{
+        if(room && room!=="Empty"){
+         console.log("changedroom")
+         console.log(user)
+         console.log(room);
+         let exisitinguser=await users.findOneAndUpdate({_id:new ObjectId(user)},
+         {$set:{currentroom:room}},
+               {returnDocument:"after"}
+    
+        )
+    }
+    else{
+        console.log("emptyroom")
+        let exisitinguser=await users.findOneAndUpdate({_id:new ObjectId(user)},
+        {$set:{currentroom:""}},
+              {returnDocument:"after"}
+   
+       )
+
+    }
+        if(exisitinguser){
+            res.json(exisitinguser);
+        }
+    }
+    catch(err){
+
+    }
+})
+
+
 router.post("/changename/:id",async(req,res,next)=>{
     let uid=req.params.id;
     console.log("requested")
@@ -77,6 +113,30 @@ console.log(err);
     }
 })
 
+//for adding properties for each documents in a collection
+router.get("/useraddproperty",async(req,res,next)=>{
+    try{
+          let documents=await users.find({}).toArray();
+          let a=0;
+          if(documents){  
+            documents.forEach((document)=>{
+              document["currentroom"]=""
+                 
+            
+             }) ;
+             console.log(documents);
+            await users.deleteMany({}); 
+            await users.insertMany(documents); 
+  
+            
+                 res.json({documents}) 
+          }
+    }
+    catch(err){
+      res.json(err);
+      
+    }
+})  
 
 
 router.post("/Signup",async (req,res,next)=>{

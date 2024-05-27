@@ -39,8 +39,7 @@ let roomid;
 let useridentity;
 serv = server.listen(5000);
 
-mongoose.connect(process.env.MongoDBURI,{ useNewUrlParser: true,
-  useUnifiedTopology: true,
+mongoose.connect(process.env.MongoDBURI,{
   w: 'majority'
 }
     ).then(()=>{

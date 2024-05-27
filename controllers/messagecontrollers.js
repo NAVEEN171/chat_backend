@@ -2,6 +2,8 @@ const express=require("express");
 const router=express.Router();
 const mongoose=require("mongoose");
 const connection = mongoose.connection;
+const { ObjectId } = require('mongoose').Types;
+
 const { v4: uuidv4 } = require('uuid');
 
 
@@ -10,6 +12,32 @@ const db = connection.useDb("users");
 const msgs = db.collection("messages");
 
 
+const users = db.collection("user");
+
+
+
+router.post("/clearmessages/:id",async(req,res,next)=>{
+  try{
+    const roomid=req.params.id;
+    console.log(roomid);
+    const {to}=req.body;
+    console.log(to);
+
+    const data=await msgs.findOneAndUpdate({name:roomid},
+      {$set:{[`${to}`]:0}},
+      {returnDocument:"after"}
+
+
+    );
+    if(data){
+      res.json(data);
+    }
+
+  }
+  catch(err){
+    console.log(err)
+  }
+})
 
 router.post("/photos/uploads",async(req,res,next)=>{
        try{
@@ -66,6 +94,39 @@ router.post("/photos/uploads",async(req,res,next)=>{
 
 })
 
+
+//for adding properties for each documents in a collection
+router.get("/addproperty",async(req,res,next)=>{
+  try{
+        let documents=await msgs.find({}).toArray();
+        let a=0;
+        if(documents){  
+          documents.forEach((document)=>{
+            console.log(a++);
+                
+                  const keys=Object.keys(document.newusers);
+                  keys.forEach((key)=>{
+                    console.log(key);
+                    document[key]=0;
+                    console.log(document)
+                  })
+               
+          
+           }) ;
+           await msgs.deleteMany({}); 
+           await msgs.insertMany(documents); 
+
+          
+               res.json({documents}) 
+        }
+  }
+  catch(err){
+    res.json(err);
+    
+  }
+
+})
+
 router.post("/search",async(req,res,next)=>{
     try{
               const {userid,selectedid}=req.body;
@@ -74,7 +135,7 @@ router.post("/search",async(req,res,next)=>{
               const select=await msgs.findOne({name:name})
               const revselect=await msgs.findOne({name:revname})
               if(select || revselect){
-                res.json({id:select?select.name:revselect.name,msg:"success",lastmessage:select?select.lastmessage:revselect.lastmessage})
+                res.json({id:select?select.name:revselect.name,msg:"success",lastmessage:select?select.lastmessage:revselect.lastmessage,unseenmessages:select?select[userid]:revselect[userid]})
               }
               else{
                 res.json({msg:"fail"})
@@ -98,9 +159,16 @@ router.post("/addmsg",async(req,res,next)=>{
            console.log(msgdocumentname)
            console.log("to+from");
            console.log(reversedmsgdocumentname)
+           let tojoinedroom=await users.findOne({_id:new ObjectId(to)});
+           let fromjoinedroom=await users.findOne({_id:new ObjectId(from)});
+           let sendmsg=true;
 
          const existchat= await msgs.findOne({name:msgdocumentname});
          const reversedexistchat=await msgs.findOne({name:reversedmsgdocumentname});
+         if(tojoinedroom.currentroom===fromjoinedroom.currentroom && (tojoinedroom.currentroom!=="" && fromjoinedroom.currentroom!=="")){
+            sendmsg=false;
+
+         }
          if(existchat || reversedexistchat){
             const currentDateTime = new Date();
 
@@ -147,7 +215,7 @@ router.post("/addmsg",async(req,res,next)=>{
                 console.log(data)
                 data=await msgs.findOneAndUpdate(
                   { name: existchat ? msgdocumentname : reversedmsgdocumentname },
-                   {$set:{newusers:data.newusers}},
+                   {$set:{newusers:data.newusers,[`${to}`]:sendmsg===false?0:data[to]+1}},
                  )
               }
              
@@ -172,6 +240,8 @@ router.post("/addmsg",async(req,res,next)=>{
             users:[from,to],
             newusers:{[`${from}`]:[],[`${to}`]:[{txt,sender:from,reciever:to,timestamps:indianDateTime}]},
             backgroundimage:"",
+            [`${from}`]:0,
+            [`${to}`]:0,
 
 
         })
