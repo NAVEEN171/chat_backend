@@ -80,8 +80,19 @@ console.log(typeof key)
     console.log(response.data);
     console.log(users);
     console.log("users")
-
+    let response2;
+  if(response){
+    console.log("response over")
+     response2=await axios.post(`https://chat-app-backend-4fhe.onrender.com/changeroom/${"Empty"}`,
+      {
+          user:key
+      }
+    )
+  }
+  console.log("room is");
+  console.log(response2.data);
     return response.data;
+    
 } catch (error) {
     console.error('Error:', error.response.data);
 }
