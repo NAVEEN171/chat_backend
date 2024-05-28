@@ -73,12 +73,13 @@ console.log(typeof key)
   }
   try {
     console.log("i am trying to fetch");
-    const response = await axios.post(`http://localhost:5000/status/${key}`, {
+    const response = await axios.post(`https://chat-app-backend-4fhe.onrender.com/status/${key}`, {
         type: "offline"
     });
     console.log("result")
     console.log(response.data);
     console.log(users);
+    console.log("users")
 
     return response.data;
 } catch (error) {
