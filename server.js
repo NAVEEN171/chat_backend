@@ -10,16 +10,103 @@ const bodyParser=require("body-parser");
 require("dotenv").config();
 const { Server } = require("socket.io");
 const server = http.createServer(app);
+const axios = require('axios');
+const winston=require("winston");
+const morgan = require('morgan');
+
+
+
+
+const { combine, timestamp, json } = winston.format;
+
+const logger = winston.createLogger({
+  level: 'http',
+  format: combine(
+    timestamp({
+      format: 'YYYY-MM-DD hh:mm:ss.SSS A',
+    }),
+    json()
+  ),
+  transports: [new winston.transports.Console()],
+});
+
+const morganMiddleware = morgan(
+  ':method :url :status :res[content-length] - :response-time ms',
+  {
+    stream: {
+      // Configure Morgan to use our custom logger with the http severity
+      write: (message) => logger.http(message.trim()),
+    },
+  }
+);
+
+app.use(morganMiddleware);
 
 
  // Import socket.io module
+const users={};
+const max_inactivity_time=1000*60*2;
+const makeuseronline=(req,res,next)=>{
+  const userId = req.headers['x-user-id'];
+  if(typeof userId!==undefined){
+    console.log("type");
+    console.log(typeof userId);
+  
+  if(users[userId]){
+    users[userId].lastactivity=Date.now();
+  }
+  else{
+   
+    users[userId]={user:userId,lastactivity:Date.now()}
+  }
+  console.log(users);
+  }
+next();
 
+}
 
+const axiosrequest=async(key)=>{
+  if(typeof key===undefined){
+    return;
+  }
+  try {
+    console.log("i am trying to fetch");
+    const response = await axios.post(`http://localhost:5000/status/${key}`, {
+        type: "offline"
+    });
+    console.log("result")
+    console.log(response.data);
+    console.log(users);
+    delete users[key]; // Remove user from users object
+
+    return response.data;
+} catch (error) {
+    console.error('Error:', error.response.data);
+}
+}
+const makeuseroffline=()=>{
+  console.log("i am running");
+     Object.keys(users).forEach((key)=>{
+           let value=users[key];
+           if(value.lastactivity+max_inactivity_time<Date.now() && value.user!=='undefined' ){
+            //make the user offline (key)
+            console.log("users")
+            console.log(users)
+              axiosrequest(key);
+
+            
+           }
+          }
+     )
+}
+setInterval(makeuseroffline,max_inactivity_time);
 
 app.use(cors());
 app.use(bodyParser.json())
 app.use("/uploads/images",express.static(path.join("uploads","images")));
 
+
+app.use(makeuseronline)
 
 app.use((req, res, next) => {
   
