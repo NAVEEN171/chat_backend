@@ -48,7 +48,7 @@ const users={};
 const max_inactivity_time=1000*30;
 const makeuseronline=(req,res,next)=>{
   const userId = req.headers['x-user-id'];
-  if(typeof userId!==undefined){
+  if(typeof userId!==undefined && userId!==undefined){
   
   if(users[userId]){
     users[userId].lastactivity=Date.now();
@@ -65,8 +65,11 @@ next();
 }
 
 const axiosrequest=async(key)=>{
+  console.log(`key is ${key}`);
   if(typeof key===undefined){
-    return;
+    console.log("type")
+console.log(typeof key)
+    return ;
   }
   try {
     console.log("i am trying to fetch");
