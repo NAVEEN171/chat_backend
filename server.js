@@ -49,8 +49,6 @@ const max_inactivity_time=1000*30;
 const makeuseronline=(req,res,next)=>{
   const userId = req.headers['x-user-id'];
   if(typeof userId!==undefined){
-    console.log("type");
-    console.log(typeof userId);
   
   if(users[userId]){
     users[userId].lastactivity=Date.now();
@@ -59,6 +57,7 @@ const makeuseronline=(req,res,next)=>{
    
     users[userId]={user:userId,lastactivity:Date.now()}
   }
+  console.log("users after inserting");
   console.log(users);
   }
 next();
@@ -87,14 +86,15 @@ const makeuseroffline=()=>{
   console.log("i am running");
      Object.keys(users).forEach((key)=>{
            let value=users[key];
-           if(value.user==='undefined'){
+           console.log(value.user)
+           if(value.user==='undefined'|| value.user===undefined){
                 delete users[key];
                 console.log("user is undefined")
                 console.log(users)
            }
            if(value.lastactivity+max_inactivity_time<Date.now() && value.user!=='undefined' ){
             //make the user offline (key)
-            console.log("users")
+            console.log("users after checking constraints")
             console.log(users)
               axiosrequest(key);
               delete users[key];
