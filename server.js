@@ -45,7 +45,7 @@ app.use(morganMiddleware);
 
  // Import socket.io module
 const users={};
-const max_inactivity_time=1000*60*2;
+const max_inactivity_time=1000*30;
 const makeuseronline=(req,res,next)=>{
   const userId = req.headers['x-user-id'];
   if(typeof userId!==undefined){
@@ -77,7 +77,6 @@ const axiosrequest=async(key)=>{
     console.log("result")
     console.log(response.data);
     console.log(users);
-    delete users[key]; // Remove user from users object
 
     return response.data;
 } catch (error) {
@@ -88,11 +87,18 @@ const makeuseroffline=()=>{
   console.log("i am running");
      Object.keys(users).forEach((key)=>{
            let value=users[key];
+           if(value.user==='undefined'){
+                delete users[key];
+                console.log("user is undefined")
+                console.log(users)
+           }
            if(value.lastactivity+max_inactivity_time<Date.now() && value.user!=='undefined' ){
             //make the user offline (key)
             console.log("users")
             console.log(users)
               axiosrequest(key);
+              delete users[key];
+
 
             
            }
