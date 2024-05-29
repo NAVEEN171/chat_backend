@@ -44,7 +44,7 @@ console.log(typeof key)
   }
   try {
     console.log("i am trying to fetch");
-    const response = await axios.post(`https://chat-app-backend-4fhe.onrender.com/status/${key}`, {
+    const response = await axios.post(`http://localhost:5000/status/${key}`, {
         type: "offline"
     });
     console.log("result")
@@ -128,8 +128,8 @@ mongoose.connect(process.env.MongoDBURI,{
       transports:["websocket","polling"],
       pingTimeout:60000,
       cors: {
-     origin: "https://chat-app-blush-rho.vercel.app",
-     // origin:["http://localhost:3000","https://chat-app-blush-rho.vercel.app","https://chat-app-backend-4fhe.onrender.com","https://chat-66i8vvsrt-naveens-projects-73ee5034.vercel.app"],
+   //  origin: "https://chat-app-blush-rho.vercel.app",
+     origin:["http://localhost:3000","https://chat-app-blush-rho.vercel.app","https://chat-app-backend-4fhe.onrender.com","https://chat-66i8vvsrt-naveens-projects-73ee5034.vercel.app"],
       methods: ['GET', 'POST'],
       allowedHeaders: ['Content-Type'],
       }
