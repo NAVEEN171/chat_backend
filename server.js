@@ -11,36 +11,7 @@ require("dotenv").config();
 const { Server } = require("socket.io");
 const server = http.createServer(app);
 const axios = require('axios');
-const winston=require("winston");
-const morgan = require('morgan');
 
-
-
-
-const { combine, timestamp, json } = winston.format;
-
-const logger = winston.createLogger({
-  level: 'http',
-  format: combine(
-    timestamp({
-      format: 'YYYY-MM-DD hh:mm:ss.SSS A',
-    }),
-    json()
-  ),
-  transports: [new winston.transports.Console()],
-});
-
-const morganMiddleware = morgan(
-  ':method :url :status :res[content-length] - :response-time ms',
-  {
-    stream: {
-      // Configure Morgan to use our custom logger with the http severity
-      write: (message) => logger.http(message.trim()),
-    },
-  }
-);
-
-app.use(morganMiddleware);
 
 
  // Import socket.io module
@@ -81,7 +52,7 @@ console.log(typeof key)
     console.log(users);
     console.log("users")
     let response2;
-  if(response){
+ /* if(response){
     console.log("response over")
      response2=await axios.post(`https://chat-app-backend-4fhe.onrender.com/changeroom/${"Empty"}`,
       {
@@ -90,7 +61,7 @@ console.log(typeof key)
     )
   }
   console.log("room is");
-  console.log(response2.data);
+  console.log(response2.data);*/
     return response.data;
     
 } catch (error) {
@@ -211,7 +182,7 @@ mongoose.connect(process.env.MongoDBURI,{
             console.log("run");
 
                   if(user===lastelement.sender) return;
-            socket.in(roomid).emit("message recieved",{lastelement,status:true});
+            socket.broadcast.emit("message recieved",{lastelement,status:true});
            })
 
            console.log(data.messages.length-1)
