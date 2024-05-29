@@ -16,7 +16,7 @@ const axios = require('axios');
 
  // Import socket.io module
 const users={};
-const max_inactivity_time=1000*30;
+const max_inactivity_time=1000*60*2;
 const makeuseronline=(req,res,next)=>{
   const userId = req.headers['x-user-id'];
   if(typeof userId!==undefined && userId!==undefined){
