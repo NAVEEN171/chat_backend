@@ -28,40 +28,40 @@ const makeuseronline=(req,res,next)=>{
    
     users[userId]={user:userId,lastactivity:Date.now()}
   }
-  console.log("users after inserting");
-  console.log(users);
+  //console.log("users after inserting");
+  //console.log(users);
   }
 next();
 
 }
 
 const axiosrequest=async(key)=>{
-  console.log(`key is ${key}`);
+  //console.log(`key is ${key}`);
   if(typeof key===undefined){
-    console.log("type")
-console.log(typeof key)
+    //console.log("type")
+//console.log(typeof key)
     return ;
   }
   try {
-    console.log("i am trying to fetch");
-    const response = await axios.post(`http://localhost:5000/status/${key}`, {
+    //console.log("i am trying to fetch");
+    const response = await axios.post(`https://chat-app-backend-4fhe.onrender.com/status/${key}`, {
         type: "offline"
     });
-    console.log("result")
-    console.log(response.data);
-    console.log(users);
-    console.log("users")
+    //console.log("result")
+    //console.log(response.data);
+    //console.log(users);
+    //console.log("users")
     let response2;
  /* if(response){
-    console.log("response over")
+    //console.log("response over")
      response2=await axios.post(`https://chat-app-backend-4fhe.onrender.com/changeroom/${"Empty"}`,
       {
           user:key
       }
     )
   }
-  console.log("room is");
-  console.log(response2.data);*/
+  //console.log("room is");
+  //console.log(response2.data);*/
     return response.data;
     
 } catch (error) {
@@ -69,19 +69,19 @@ console.log(typeof key)
 }
 }
 const makeuseroffline=()=>{
-  console.log("i am running");
+  //console.log("i am running");
      Object.keys(users).forEach((key)=>{
            let value=users[key];
-           console.log(value.user)
+           //console.log(value.user)
            if(value.user==='undefined'|| value.user===undefined){
                 delete users[key];
-                console.log("user is undefined")
-                console.log(users)
+                //console.log("user is undefined")
+                //console.log(users)
            }
            if(value.lastactivity+max_inactivity_time<Date.now() && value.user!=='undefined' ){
             //make the user offline (key)
-            console.log("users after checking constraints")
-            console.log(users)
+            //console.log("users after checking constraints")
+            //console.log(users)
               axiosrequest(key);
               delete users[key];
 
@@ -137,19 +137,19 @@ mongoose.connect(process.env.MongoDBURI,{
     
     io.on("connection", (socket) => {
       let uidd;
-      console.log("Connected to socket.io");
+      //console.log("Connected to socket.io");
         socket.on("setup",(user)=>{
           socket.join(user._id);
           useridentity=user._id;
           uidd=user._id;
-          console.log(`user connected ${user._id}`)
+          //console.log(`user connected ${user._id}`)
           io.emit("connuser",user._id);
         })
         socket.on("join chat",(room)=>{
-          console.log(`room:${room}`)
+          //console.log(`room:${room}`)
            socket.join(room);
           
-           console.log(`joined room ${room}`)
+           //console.log(`joined room ${room}`)
            if(room!==null){
             roomid=room
             socket.emit("joinedchat",room)
@@ -160,11 +160,11 @@ mongoose.connect(process.env.MongoDBURI,{
           io.emit("disconn",uidd);
         })
         socket.on("new message",(data)=>{
-          console.log("data fecthed")
-           console.log(data.messages.length-1);  
-           console.log("last msg");
+          //console.log("data fecthed")
+           //console.log(data.messages.length-1);  
+           //console.log("last msg");
            let lastelement=data.messages[data.messages.length-1]
-           console.log(lastelement)
+           //console.log(lastelement)
           
           /* if(useridentity===lastelement.sender){
                lastelement.send=true;
@@ -172,27 +172,27 @@ mongoose.connect(process.env.MongoDBURI,{
            else{
             lastelement.send=false;
            }*/
-           console.log(data.users)
+           //console.log(data.users)
            let messagee=lastelement.txt;
            if(data.users.length<=1){
               return;
            }
            data.users.forEach((user)=>{
-            console.log(user);
-            console.log("run");
+            //console.log(user);
+            //console.log("run");
 
                   if(user===lastelement.sender) return;
             socket.broadcast.emit("message recieved",{lastelement,status:true});
            })
 
-           console.log(data.messages.length-1)
+           //console.log(data.messages.length-1)
         })
     })
   
   
   })
   .catch((err)=>{
-    console.log("not ")
+    //console.log("not ")
     console.log(err)
   })
   const connection=mongoose.connection;

@@ -18,22 +18,22 @@ const users = db.collection("user");
 router.post("/changeroom/:id",async(req,res,next)=>{
     let room=req.params.id;
     const {user}=req.body;
-
+let exisitinguser;
     
     try{
         if(room && room!=="Empty"){
-         console.log("changedroom")
-         console.log(user)
-         console.log(room);
-         let exisitinguser=await users.findOneAndUpdate({_id:new ObjectId(user)},
+         //console.log("changedroom")
+         //console.log(user)
+         //console.log(room);
+          exisitinguser=await users.findOneAndUpdate({_id:new ObjectId(user)},
          {$set:{currentroom:room}},
                {returnDocument:"after"}
     
         )
     }
     else{
-        console.log("emptyroom")
-        let exisitinguser=await users.findOneAndUpdate({_id:new ObjectId(user)},
+        //console.log("emptyroom")
+        exisitinguser=await users.findOneAndUpdate({_id:new ObjectId(user)},
         {$set:{currentroom:""}},
               {returnDocument:"after"}
    
@@ -45,18 +45,18 @@ router.post("/changeroom/:id",async(req,res,next)=>{
         }
     }
     catch(err){
-
+console.log(err)
     }
 })
 
 
 router.post("/changename/:id",async(req,res,next)=>{
     let uid=req.params.id;
-    console.log("requested")
-    console.log(uid)
+    //console.log("requested")
+    //console.log(uid)
     try{
          const {name}=req.body;
-         console.log(name)
+         //console.log(name)
          let exisitinguser=await users.findOneAndUpdate({_id:new ObjectId(uid)},{
             $set:{username:name},
             
@@ -77,15 +77,15 @@ router.post("/changename/:id",async(req,res,next)=>{
 router.post("/status/:id",async (req,res,next)=>{
     let uid=req.params.id;
     const {type}=req.body;
-    console.log("details");
-    console.log(type);
-    console.log(uid);
+    //console.log("details");
+    //console.log(type);
+    //console.log(uid);
     try{
         let result;
         const existinguser=await users.findOne({_id:new ObjectId(uid)});
-        console.log(existinguser)
+        //console.log(existinguser)
         if(type==="online" && existinguser.isactive===false){
-            console.log("run me")
+            //console.log("run me")
       
       if(existinguser){
          result=await users.findOneAndUpdate({_id:new ObjectId(uid)},
@@ -124,7 +124,7 @@ router.get("/useraddproperty",async(req,res,next)=>{
                  
             
              }) ;
-             console.log(documents);
+             //console.log(documents);
             await users.deleteMany({}); 
             await users.insertMany(documents); 
   
@@ -140,7 +140,7 @@ router.get("/useraddproperty",async(req,res,next)=>{
 
 
 router.post("/Signup",async (req,res,next)=>{
-    console.log("in function");
+    //console.log("in function");
     try{
        const {username,email,password}=req.body;
        const existinguser=await users.findOne({email});
@@ -169,9 +169,9 @@ router.post("/Signup",async (req,res,next)=>{
 
 
        }
-       console.log("insert")
-       console.log(insertedData);
-       console.log(user);
+       //console.log("insert")
+       //console.log(insertedData);
+       //console.log(user);
        delete user.password;
        return res.json({user:insertedData,status:200},
         )
@@ -187,7 +187,7 @@ router.post("/Login",async (req,res,next)=>{
     try{
     
     const {email,password}=req.body;
-    console.log(email,password)
+    //console.log(email,password)
     const existinguser=await users.findOne({email});
  
  if(!existinguser){
@@ -196,14 +196,14 @@ router.post("/Login",async (req,res,next)=>{
    
     const passwordvalidity= await bcrypt.compare(password,existinguser.password);
     
-    console.log(passwordvalidity)
+    //console.log(passwordvalidity)
    
     if(existinguser && !passwordvalidity){
         
         return res.json({msg:"invalid credentials",status:400})
     }
     if(existinguser && passwordvalidity){
-        console.log(existinguser)
+        //console.log(existinguser)
                return res.json({user:existinguser,status:200})
     }}
     catch(err){
@@ -213,10 +213,10 @@ router.post("/Login",async (req,res,next)=>{
 router.get("/getallusers/:id",async (req,res,next)=>{
     try{
         const userid=req.params.id;
-        console.log(userid)
+        //console.log(userid)
      let allusers=await users.find({_id:{$ne:new ObjectId(userid)}},{username:1,setavatar:1,avatarimage:1,email:0,password:0})
      allusers= await allusers.toArray();
-     console.log(allusers)
+     //console.log(allusers)
     res.json({users:allusers,staus:200})
     }
     catch(err){
@@ -226,10 +226,10 @@ router.get("/getallusers/:id",async (req,res,next)=>{
 router.get("/getuser/:id",async (req,res,next)=>{
     try{
         const userid=req.params.id;
-        console.log(userid);
-        console.log("getting user....")
+        //console.log(userid);
+        //console.log("getting user....")
         const exisitinguser=await users.findOne({_id:new ObjectId(userid)});
-        console.log(exisitinguser);
+        //console.log(exisitinguser);
 
     
           const changeduser={
@@ -247,7 +247,7 @@ router.get("/getuser/:id",async (req,res,next)=>{
 
     }
     catch(err){
-        console.log("error happens here")
+        //console.log("error happens here")
 
         console.log(err);
     }
@@ -267,7 +267,7 @@ router.post("/Setavatar/:id",async (req,res,next)=>{
             }
         }    
      
-     console.log(Userid)
+     //console.log(Userid)
      const avatarImage=req.body.image;
      const user=await users.findOneAndUpdate(
         {_id:new ObjectId(Userid)},
@@ -288,16 +288,16 @@ router.post("/Setavatar/:id",async (req,res,next)=>{
 router.delete("/delete/:id",async(req,res,next)=>{
     const uid=req.params.id;
 
-    console.log("deletion process")
-    console.log(uid)
+    //console.log("deletion process")
+    //console.log(uid)
     let deleted;
     try{
     const existinguser=await users.findOne({_id:new ObjectId(uid)});
-    console.log(existinguser)
+    //console.log(existinguser)
 
     if(existinguser){
          deleted=await users.deleteOne({_id:new ObjectId(uid)});
-        console.log("deletion happened");
+        //console.log("deletion happened");
         
     }
     if(deleted){
@@ -325,14 +325,14 @@ router.post("/Setavatarfile/:id",fileupload.single('image'),async (req,res,next)
                })       
         }
     }
-    console.log("requested")
-    console.log(req.body);
-    console.log(req.file);
+    //console.log("requested")
+    //console.log(req.body);
+    //console.log(req.file);
     const userimage={
         filename:req.file.filename,
         path:req.file.path,
     }
-    console.log(userimage);
+    //console.log(userimage);
     try{
         const exisitinguser=await users.findOne({_id:new ObjectId(userid)});
         if(exisitinguser){
@@ -353,7 +353,7 @@ router.post("/Setavatarfile/:id",fileupload.single('image'),async (req,res,next)
         {returnDocument:"after"}
         
         );
-        console.log(existinguser)
+        //console.log(existinguser)
         res.json({details:exisitinguser,status:200});
        
     }
